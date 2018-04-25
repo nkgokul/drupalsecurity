@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      textarea{
+        padding: 5px;
+      }
+      div.row{
+        padding : 0 0 5px 0;
+      }
+      div.right-region {
+        background-color: #F8F8F8 !important;
+        padding : 10px;
+        min-height: 600px;
+      }
+      div.left-region {
+        background-color: #FAFAFAFA !important;
+        min-height: 600px;
+      }
+      body{
+        background-color: #FFFFFF;
+      }
+      h1 {
+        padding : 5px;
+      }
+      div.container{
+        padding : 15px;
+
+      }
+    </style>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title></title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+  </head>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+
+    <script>
+    console.log('hello, is this working');
+    var securityString = [];
+    var riskMetric = [];
+    var securityStringShortcodeString ="";
+    securityString["AC:None"]="Attacker just needs to visit the page to exploit the vulnerability."
+    securityString["AC:Basic"]="Attacker must follow a specific path to exploit the vulnerability."
+    securityString["AC:Complex"]="Attacker must follow a multi-step, unintuitive process with high number of dependencie to exploit the vulnerability.";
+
+    securityString["A:None"]="There are no priviges required to exploit the vulnerability. So all users including anonymous users can exploit the vulnerability.";
+    securityString["A:User"]="Basic/commonly assigned permissions are required to exploit the vulnerability.";
+    securityString["A:Admin"]="Broader permissions or Admin access is required exploit the vulnerability.";
+
+    securityString["CI:All"]="All non-public data is accessible due to this vulnerability.";
+    securityString["CI:Some"]="Certain non-public data is released due to this vulnerability.";
+    securityString["CI:None"]="No confidential data has been exposed due to this vulnerability.";
+
+    securityString["II:All"]="All data can be modified or deleted due to this vulnerability.";
+    securityString["II:Some"]="Some data can be modified due to this vulnerability.";
+    securityString["II:None"]="Data integrity remains intact. No data can be modified/deleted due to this vulnerabiliyt.";
+
+    securityString["E:Exploit"]="Exploit exists (documented or deployed exploit code already in the wild). So further delay can compromise your site as hackers can easily reuse this code to target websites with this vulnerability.";
+    securityString["E:Proof"]="Proof of concept exists (documented methods for developing exploit exist in the wild). So it is better to apply that patch before an exploit has been devised. Suggested to apply the patch ASAP.";
+    securityString["E:Theoretical"]="Theoretical or white-hat (no public exploit code or documentation on development exists). Since there are no public exploit code available it might take some before the exploits are devised. But it always suggested to apply your patch ASAP.";
+
+    securityString["TD:All"]="All module configurations are exploitable. So there is a high probability that yoru site is suceptible to this vulnerability.";
+    securityString["TD:Default"]="Default or common module configurations are exploitable, but a config change can disable the exploit. Please check your configurations to know the impact of this vulnerability on your site.";
+    securityString["TD:Uncommon"]="Only uncommon module configurations are exploitable. So there is a chance that you site is not using this module configuration. But do check to be sure. Irrespective of that it is suggested to apply the patches.";
+
+    riskMetric["AC"]="Access Complexity";
+    riskMetric["A"]="Authentication";
+    riskMetric["CI"]="Confidentiality impact";
+    riskMetric["II"]="Integrity impact";
+    riskMetric["E"]="Exploit (Zero-day impact)";
+    riskMetric["TD"]="Target Distribution";
+
+$(document).ready(function() {
+    $('#get-details').click(function(){
+      str = $("#security-string").val();
+      securityStringShortcodeString = str.substr(str.indexOf(' ')+1);;
+      console.log(securityStringShortcodeString, "securityStringShortcodeString");
+      var finalString = "<br/br/>";
+      splitArray = $(securityStringShortcodeString.split("/"));
+      $.each(splitArray, function(index, value){
+        finalString += "<b>" + riskMetric[value.split(":")[0]] + " : " + value.split(":")[1] + "</b> = " +  securityString[value] + '<br/>\n';
+      });
+      finalString += "<br/><br/><b>NB : </b> The descriptions are just to make it easier to comprehend. For the official version check out <a target='_blank' href='https://www.drupal.org/drupal-security-team/security-risk-levels-defined'>https://www.drupal.org/drupal-security-team/security-risk-levels-defined</a>";
+      $("#security-string-official-details").html(finalString);
+    });
+});
+
+    </script>
+    <div class="container">
+      <h1>Decoding Security Risk Summary</h1>
+      <div class="row">
+        <div class="col-xs-18 col-md-9 left-region">
+          <div class="row">
+            <div>
+                  Enter the secruity risk string that you get from <a href="https://www.drupal.org/security" target="_blank">https://www.drupal.org/security</a> page.
+            </div>
+            <textarea id="security-string" rows="4" style="min-width: 100%" >AC:None/A:None/CI:All/II:All/E:Exploit/TD:Default</textarea>
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary" id="get-details">Decode for Humans</button>
+            </div>
+          </div>
+          <div class="row" id="security-string-official-details"></div>
+          <div class="row" id="security-string-details"></div>
+        </div>
+        <div class="col-xs-6 col-md-3 right-region">
+          This crude version is put together by <a href="https://www.twitter.com/@gokulnk" target="_blank">@gokulnk</a>. Feel free to fork on github. <br/> Put together for this blog on <a href="https://valuebound.com/">Valuebound Website</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
